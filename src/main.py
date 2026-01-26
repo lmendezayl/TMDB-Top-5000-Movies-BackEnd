@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from http import HTTPStatus
 from fastapi import FastAPI
 from infrastructure.database import create_db_and_tables
 from infrastructure import models
@@ -17,3 +18,13 @@ app = FastAPI(lifespan=lifespan)
 async def read_root():
     return {"Hello": "World"}
 
+@app.get("/health")
+async def health_check():
+    if HTTPStatus.OK:
+        return {"status": "ok"}
+    if HTTPStatus.SERVICE_UNAVAILABLE:
+        return {"status": "unavailable"}
+    return {"status": "unknown"}
+
+
+    
