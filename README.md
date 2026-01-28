@@ -10,6 +10,14 @@ A complete data engineering solution with ETL pipeline, REST API, vector search,
 - **REST API**: 6+ endpoints with Basic Auth and pagination
 - **Vector Search**: Full-text search with Typesense
 - **Docker Support**: Docker Compose for production deployment
+
+## Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design and Mermaid diagrams
+- **[API_USAGE.md](API_USAGE.md)** - API examples (curl, Python, JS)
+- **[TESTING.md](TESTING.md)** - Testing guide and fixtures
+- **[PHASE5_TYPESENSE.md](PHASE5_TYPESENSE.md)** - Vector DB integration
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment
 - **API Documentation**: Swagger/ReDoc with interactive examples
 
 ## Quick Start (Windows)
