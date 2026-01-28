@@ -1,17 +1,22 @@
 from sqlmodel import SQLModel, create_engine, Session
+from pathlib import Path
 
-sqlite_file_name = "data/gold/warehouse.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+# Ruta absoluta para SQLite
+db_path = Path(__file__).resolve().parent.parent.parent / "data" / "gold" / "warehouse.db"
+DATABASE_URL = f"sqlite:///{db_path}"
 
-# check_same_thread is needed for sqlite to allow different threads with the same connection on the database
-# https://fastapi.tiangolo.com/tutorial/sql-databases/#create-an-engine
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
+engine = create_engine(
+    DATABASE_URL,
+    echo=False,
+    connect_args={"check_same_thread": False}
+)
+
+def create_db_and_tables() -> None:
+    """Crea todas las tablas en la BD."""
+    SQLModel.metadata.create_all(engine)
+    print("✓ Tablas creadas en SQLite")
 
 def get_session():
+    """Generador de sesiones."""
     with Session(engine) as session:
         yield session
-    
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-    

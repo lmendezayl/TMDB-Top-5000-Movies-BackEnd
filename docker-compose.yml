@@ -1,0 +1,41 @@
+services:
+  typesense:
+    image: typesense/typesense:27.0
+    container_name: typesense_vector_db
+    ports:
+      - "8108:8108"
+    environment:
+      TYPESENSE_API_KEY: "ts-xyz123456"
+      TYPESENSE_ENABLE_CORS: "true"
+    volumes:
+      - typesense_data:/data
+    networks:
+      - datalake
+    command: '--data-dir /data --api-key=ts-xyz123456 --enable-cors'
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: datalake_api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "sqlite:///data/gold/warehouse.db"
+      PYTHONPATH: /app/src
+      TYPESENSE_HOST: "typesense"  # ← Nombre del servicio
+      TYPESENSE_PORT: "8108"
+      TYPESENSE_API_KEY: "ts-xyz123456"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - typesense
+    networks:
+      - datalake
+
+volumes:
+  typesense_data:
+
+networks:
+  datalake:
+    driver: bridge
