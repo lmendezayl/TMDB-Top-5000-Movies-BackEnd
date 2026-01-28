@@ -1,6 +1,6 @@
 #  TMDB Top 5000 Movies API - REST API Data Engineering Project
 
-A complete data engineering solution with ETL pipeline, REST API, vector search, and comprehensive testing.
+A complete data engineering solution with ETL pipeline, REST API and vector search.
 
 ## Features
 
@@ -14,9 +14,6 @@ A complete data engineering solution with ETL pipeline, REST API, vector search,
 ## Documentation
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design and Mermaid diagrams
-- **[API_USAGE.md](API_USAGE.md)** - API examples (curl, Python, JS)
-- **[TESTING.md](TESTING.md)** - Testing guide and fixtures
-- **[PHASE5_TYPESENSE.md](PHASE5_TYPESENSE.md)** - Vector DB integration
 - **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment
 - **API Documentation**: Swagger/ReDoc with interactive examples
 
