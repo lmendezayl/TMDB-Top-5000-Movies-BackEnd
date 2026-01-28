@@ -130,5 +130,5 @@ class DomainMapper:
             revenue=fact.revenue,
             popularity=fact.popularity,
             vote_average=fact.vote_average,
-            runtime=None  # No está en FactMovieRelease, pero está en MovieDomainEntity
+            runtime=None
         )

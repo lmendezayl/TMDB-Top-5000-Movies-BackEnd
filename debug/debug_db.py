@@ -4,21 +4,18 @@ from src.infrastructure.models import FactMovieRelease, BridgeMovieGenre, DimMov
 
 def check_db():
     with Session(engine) as session:
-        # Check total counts
         n_facts = session.exec(select(func.count(FactMovieRelease.id))).one()
         n_bridges = session.exec(select(func.count(BridgeMovieGenre.id))).one()
         
         print(f"Total Facts: {n_facts}")
         print(f"Total Bridges: {n_bridges}")
         
-        # Check for non-zero values
         non_zero_pop = session.exec(select(func.count(FactMovieRelease.id)).where(FactMovieRelease.popularity > 0)).one()
         print(f"Facts with popularity > 0: {non_zero_pop}")
         
         non_zero_budget = session.exec(select(func.count(FactMovieRelease.id)).where(FactMovieRelease.budget > 0)).one()
         print(f"Facts with budget > 0: {non_zero_budget}")
 
-        # Check a specific movie
         movie = session.exec(select(DimMovie).where(DimMovie.title.like("%Avatar%"))).first()
         if movie:
             print(f"\nMovie: {movie.title} (ID: {movie.id})")

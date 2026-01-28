@@ -11,7 +11,6 @@ def reset_database():
     print("⚠️  RESET DATABASE")
     print("="*70)
     
-    # Rutas a limpiar
     files_to_remove = [
         "data/gold/warehouse.db",
         "data/gold/warehouse.db-shm",
@@ -23,7 +22,6 @@ def reset_database():
         "data/gold",
     ]
     
-    # Eliminar archivos
     print("\n🗑️  Eliminando archivos...")
     for file_path in files_to_remove:
         p = Path(file_path)
@@ -31,12 +29,10 @@ def reset_database():
             p.unlink()
             print(f"  ✓ Eliminado: {file_path}")
     
-    # Limpiar carpetas (pero mantener la estructura)
     print("\n📁 Limpiando carpetas...")
     for folder_path in folders_to_clean:
         p = Path(folder_path)
         if p.exists():
-            # Eliminar archivos dentro, mantener directorio
             for file in p.glob("*"):
                 if file.is_file():
                     file.unlink()
@@ -45,7 +41,6 @@ def reset_database():
                     shutil.rmtree(file)
                     print(f"  ✓ Eliminada carpeta: {file}")
     
-    # Asegurar que existan las carpetas
     print("\n✏️  Recreando estructura...")
     for folder_path in folders_to_clean:
         p = Path(folder_path)
@@ -56,10 +51,8 @@ def reset_database():
     print("✅ BASE DE DATOS Y ARCHIVOS RESETEADOS")
     print("="*70)
 
-    # Resetear Typesense
     print("\n🧹 Intentando resetear Typesense...")
     try:
-        # Añadir src al path para importar módulos
         project_root = Path(__file__).parent.absolute()
         src_path = project_root / "src"
         if str(src_path) not in sys.path:
@@ -68,7 +61,6 @@ def reset_database():
         from infrastructure.typesense_client import TypesenseClient
         from infrastructure.typesense_indexer import TypesenseIndexer
         
-        # Intentar conectar a localhost (asumiendo ejecución local)
         client = TypesenseClient(host="localhost", port=8108)
         indexer = TypesenseIndexer(client=client)
         

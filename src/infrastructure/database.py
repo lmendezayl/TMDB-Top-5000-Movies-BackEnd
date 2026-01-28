@@ -1,7 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session
 from pathlib import Path
 
-# Ruta absoluta para SQLite
 db_path = Path(__file__).resolve().parent.parent.parent / "data" / "gold" / "warehouse.db"
 DATABASE_URL = f"sqlite:///{db_path}"
 

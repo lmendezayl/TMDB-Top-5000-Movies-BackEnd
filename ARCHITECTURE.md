@@ -53,7 +53,7 @@ In the Silver layer, data is cleaned, validated, and converted to columnar stora
 
 ```mermaid
 graph LR
-    subgraph Silver["Silver Directory"] 
+    subgraph Silver["Silver Directory"]
         S1["movies_silver.parquet"]
         S2["credits_silver.parquet"]
     end

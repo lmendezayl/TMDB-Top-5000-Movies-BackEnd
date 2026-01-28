@@ -24,7 +24,6 @@ class TypesenseClient:
             logger.warning("typesense package not installed")
             return
 
-        # Usar variable de entorno o default
         import os
         host = host or os.getenv("TYPESENSE_HOST", "typesense")
         port = port or int(os.getenv("TYPESENSE_PORT", "8108"))
@@ -43,11 +42,9 @@ class TypesenseClient:
     def health_check(self) -> bool:
         """Verifica si Typesense está disponible."""
         try:
-            # Opción más segura: Intentar hacer un health check explícito
             return self.client.operations.is_healthy()
         except Exception:
             try:
-                # Fallback: Intentar listar colecciones
                 self.client.collections.retrieve()
                 return True
             except Exception as e:
@@ -121,7 +118,7 @@ class TypesenseClient:
         except Exception as e:
             logger.error(f"Error upserting documents: {e}")
             
-            # DEBUG: Imprimir el primer documento para ver qué tiene mal
+            # por si no puede imprimir el documento 
             if documents:
                 import json
                 try:

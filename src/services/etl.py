@@ -32,7 +32,6 @@ class ETLPipeline:
         silver_path: str = "data/silver",
         gold_path: str = "data/gold"
     ):
-        # Obtener directorio raíz del proyecto
         base_dir = Path(__file__).resolve().parent.parent.parent
         
         self.bronze_path = base_dir / bronze_path
@@ -110,17 +109,15 @@ class ETLPipeline:
     def build_dim_date(self, movies_df: pd.DataFrame) -> pd.DataFrame:
         """Construye dimensión Date a partir de fechas de lanzamiento."""
         logger.info("Construyendo Dim Date...")
-        
-        # Obtener rango de fechas
+
         min_date = movies_df['release_date'].min()
         max_date = movies_df['release_date'].max()
-        
+
         if pd.isna(min_date):
             min_date = pd.Timestamp('1900-01-01')
         if pd.isna(max_date):
             max_date = pd.Timestamp('2026-01-25')
         
-        # Crear rango de fechas
         date_range = pd.date_range(start=min_date, end=max_date, freq='D')
         
         dim_date = pd.DataFrame({
@@ -150,7 +147,6 @@ class ETLPipeline:
             'tagline', 'status'
         ]].copy()
         
-        # Resetear índices para garantizar secuencia 0, 1, 2, ...
         dim_movie = dim_movie.reset_index(drop=True)
         
         dim_movie = dim_movie.rename(columns={'id': 'original_id'})
@@ -169,7 +165,6 @@ class ETLPipeline:
         
         for genres_json in movies_df['genres']:
             try:
-                # Parsear JSON
                 if isinstance(genres_json, str):
                     genres = json.loads(genres_json.replace("'", '"'))
                 else:
@@ -378,20 +373,16 @@ class ETLPipeline:
         """Construye tabla de hechos Fact Movie Release."""
         logger.info("Construyendo Fact Movie Release...")
         
-        # Resetear índices para garantizar secuencia consistente
         movies_df = movies_df.reset_index(drop=True)
         
-        # Mapeo directo: índice en movies_df -> id en dim_movie
         original_to_new_id = dict(zip(movies_df['id'], range(1, len(movies_df) + 1)))
         date_to_id = dict(zip(dim_date['date'].dt.date, dim_date['id']))
         
-        # Mapeos para directors, languages, companies, countries
         movie_to_director = {}
         movie_to_language = {}
         movie_to_company = {}
         movie_to_country = {}
         
-        # Mapear directores desde credits
         for _, credit_row in credits_df.iterrows():
             movie_id = credit_row['movie_id']
             try:
@@ -410,7 +401,6 @@ class ETLPipeline:
             except Exception:
                 pass
         
-        # Mapear idiomas desde movies
         for _, movie_row in movies_df.iterrows():
             movie_id = movie_row['id']
             try:
@@ -428,7 +418,6 @@ class ETLPipeline:
             except Exception:
                 pass
         
-        # Mapear compañías desde movies
         for _, movie_row in movies_df.iterrows():
             movie_id = movie_row['id']
             try:
@@ -445,7 +434,6 @@ class ETLPipeline:
             except Exception:
                 pass
         
-        # Mapear países desde movies
         for _, movie_row in movies_df.iterrows():
             movie_id = movie_row['id']
             try:
@@ -468,10 +456,10 @@ class ETLPipeline:
         for idx, (i, row) in enumerate(movies_df.iterrows()):
             try:
                 original_id = row['id']
-                movie_id = idx + 1  # Basado en posición, no en búsqueda
+                movie_id = idx + 1
                 
                 release_date = pd.to_datetime(row['release_date'], errors='coerce')
-                date_id = 1  # Default
+                date_id = 1
                 
                 if pd.notna(release_date):
                     date_id = date_to_id.get(release_date.date(), 1)
@@ -669,11 +657,9 @@ class ETLPipeline:
             
             self.save_gold(dims, bridge_df, fact_df)
             
-                # Crear tablas en SQLite (Gold layer)
             create_db_and_tables()
             logger.info("✓ Tablas de BD creadas: data/gold/warehouse.db")  
             
-            # ====== Cargar a SQLite ======
             logger.info("\n[FASE 3/3] GOLD → SQLite\n")
             self.load_gold_to_database()
             

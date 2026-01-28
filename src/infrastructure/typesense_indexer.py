@@ -103,12 +103,7 @@ class TypesenseIndexer:
         """
         try:
             logger.info("Starting indexing of movies...")
-            
-            # Asegurar que la colección exista antes de indexar
             self.ensure_collection_exists()
-
-            # Obtener películas con sus datos de la tabla de hechos y fecha
-            # Join: DimMovie <- FactMovieRelease -> DimDate
             results = session.exec(
                 select(DimMovie, FactMovieRelease, DimDate)
                 .join(FactMovieRelease, DimMovie.id == FactMovieRelease.movie_info_id)
@@ -119,10 +114,7 @@ class TypesenseIndexer:
 
             documents = []
             for movie, fact, date in results:
-                # Obtener géneros de la película
                 genres = self._get_movie_genres(session, movie.id)
-                
-                # Obtener fecha como string YYYY-MM-DD
                 release_date_str = ""
                 if date and date.date:
                     try:
@@ -130,7 +122,6 @@ class TypesenseIndexer:
                     except Exception:
                         release_date_str = str(date.date)
 
-                # Construir documento
                 popularity = float(fact.popularity) if fact.popularity else 0.0
                 if math.isnan(popularity):
                     popularity = 0.0
@@ -142,23 +133,22 @@ class TypesenseIndexer:
                 doc = {
                     "id": str(movie.id),
                     "title": str(movie.title) if movie.title else "Untitled",
-                    "original_title": str(movie.title), # DimMovie no tiene original_title, usamos title por ahora o lo sacamos si no existe
+                    "original_title": str(movie.title),
                     "overview": str(movie.overview) if movie.overview else "",
                     "release_date": release_date_str,
                     "runtime": int(fact.runtime) if fact.runtime else (int(movie.runtime) if movie.runtime else 0),
                     "popularity": popularity,
                     "vote_average": vote_average,
-                    "vote_count": 0, # No está en FactMovieRelease
+                    "vote_count": 0,
                     "budget": int(fact.budget) if fact.budget else 0,
                     "revenue": int(fact.revenue) if fact.revenue else 0,
                     "original_language": str(movie.original_language) if movie.original_language else "en",
                     "genres": [str(g) for g in genres],
-                    "directors": [], # TODO: Implementar join con DimDirector si se necesita
-                    "production_companies": [], # TODO: Implementar join con DimProductionCompany
+                    "directors": [],
+                    "production_companies": [],
                 }
                 documents.append(doc)
 
-            # Indexar en lotes de 500
             batch_size = 500
             indexed_count = 0
             for i in range(0, len(documents), batch_size):

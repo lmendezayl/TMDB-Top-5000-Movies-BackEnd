@@ -3,7 +3,6 @@ import typesense
 import os
 import json
 
-# Configuration
 host = "localhost"
 port = 8108
 api_key = "ts-xyz123456"
@@ -19,9 +18,8 @@ try:
 
     collection_name = "movies"
     
-    # Search precise match
     print("\n--- Searching 'Interstellar' with details ---")
-    search_params = {
+    search_params = {   
         "q": "Interstellar",
         "query_by": "title",
         "limit": 1
@@ -35,7 +33,6 @@ try:
         print(f"Vote Average: {doc.get('vote_average')}")
         print(f"Full Doc: {json.dumps(doc, indent=2)}")
 
-    # Test with filter that API uses
     print("\n--- Searching 'Interstellar' with filter 'vote_average:[0, 10]' ---")
     search_params = {
         "q": "Interstellar",

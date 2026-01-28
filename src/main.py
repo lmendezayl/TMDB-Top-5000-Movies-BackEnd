@@ -12,7 +12,6 @@ from api.routes import search as search_router
 from core import get_current_user
 from services import ETLPipeline
 
-# Configurar logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
